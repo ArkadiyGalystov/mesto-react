@@ -13,7 +13,8 @@
 - валидация форм с помощью JavaScript.
 
 **3. Используются технологии:** html, css, flexbox, БЭМ, JavaScript, DOM, Figma.
+
 **3.1. React:** CRA, хуки useState, useEffect.
 
 ### Ссылка на проект
-<a href="" target="_blank">Открыть сайт в новой вкладке</a>
+<a href="https://arkadiygalystov.github.io/mesto-react/" target="_blank">Открыть сайт в новой вкладке</a>
