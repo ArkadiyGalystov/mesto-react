@@ -109,7 +109,7 @@ function App() {
 
     setIsLoading(true);
     request()
-      .then((closeAllPopups) => request(closeAllPopups))
+      .then(data => {closeAllPopups(data)})
       //.then(closeAllPopups) // ловим ошибку
       .catch((err) => console.log(err)) // используется для логирования ошибок
       .finally(() => setIsLoading(false)); // возвращаем обратно начальный текст кнопки
