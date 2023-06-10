@@ -40,7 +40,7 @@ function Main({
               aria-label='кнопка редактирования профиля'
               onClick={onEditProfile}
             />
-            <p className='profile__job'>{about}</p>
+            <p className='profile__about'>{about}</p>
           </div>
           <button
             className='profile__add-button'
