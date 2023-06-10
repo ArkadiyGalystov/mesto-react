@@ -7,7 +7,6 @@ import { Footer } from './Footer.js';
 
 import { ImagePopup } from './ImagePopup.js';
 import { api } from '../utils/Api.js';
-import { AppContext } from '../contexts/AppContext.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 
 import { EditProfilePopup } from './EditProfilePopup.js';
@@ -66,9 +65,9 @@ function App() {
       (i) => i._id === currentUser._id
     );
     api.toggleLikeCard(
-        card._id,
-        !isLiked
-      )
+      card._id,
+      !isLiked
+    )
       .then((newCard) => {
         setCards((state) =>
           state.map((c) => (c._id === card._id ? newCard : c))
@@ -89,36 +88,40 @@ function App() {
 
   // редактирование данных пользователя
   function handleUpdateUser(inputValues) {
-    function makeRequest()  {
+    function makeRequest() {
       return api.editUserInfo(inputValues).then(setCurrentUser);
     }
     handleSubmit(makeRequest);
   }
-  
+
   // добавление новой карточки
   function handleAddPlaceSubmit(inputValues) {
     function makeRequest() {
       return api.addCards(inputValues).then((newCard) => {
-        setCards([newCard,...cards,]);
-      })}
-    handleSubmit(makeRequest)  
+        setCards([newCard, ...cards,]);
+      })
+    }
+    handleSubmit(makeRequest)
   }
 
   // принимает функцию запроса
   function handleSubmit(request) {// изменяем текст кнопки до вызова
-    
+
     setIsLoading(true);
     request()
-      .then(closeAllPopups) // ловим ошибку
-      .catch(console.error) // используется для логирования ошибок
+      .then((closeAllPopups) => request(closeAllPopups))
+      //.then(closeAllPopups) // ловим ошибку
+      .catch((err) => console.log(err)) // используется для логирования ошибок
       .finally(() => setIsLoading(false)); // возвращаем обратно начальный текст кнопки
   }
 
   // удаление карточки
   function handleCardDelete(card) {
     function makeRequest() {
-      return api.removeCardApi(card._id).then(() => {setCards((cards) => cards.filter((c) => c._id !== card._id))
-    })}
+      return api.removeCardApi(card._id).then(() => {
+        setCards((cards) => cards.filter((c) => c._id !== card._id))
+      })
+    }
     handleSubmit(makeRequest);
   }
 
@@ -133,59 +136,57 @@ function App() {
   }
 
   return (
-    <AppContext.Provider value = {{ isLoading, closeAllPopups }}>
-      <CurrentUserContext.Provider value={currentUser}>
-        <div className='root'>
-          <Header />
-          <Main
-            onEditAvatar={handleEditAvatarClick} // аватар
-            onEditProfile={handleEditProfileClick} // профиль
-            onAddPlace={handleAddPlaceClick} // новая карта
-            onCardClick={handleCardClick} // слайдер
-            cards={cards}
-            onCardLike={handleCardLike}
-            onCardDelete={handleDeleteClick}
-            onConfirmDelete={handleDeleteClick}
-          />
-          <Footer />
+    <CurrentUserContext.Provider value={currentUser}>
+      <div className='root'>
+        <Header />
+        <Main
+          onEditAvatar={handleEditAvatarClick} // аватар
+          onEditProfile={handleEditProfileClick} // профиль
+          onAddPlace={handleAddPlaceClick} // новая карта
+          onCardClick={handleCardClick} // слайдер
+          cards={cards}
+          onCardLike={handleCardLike}
+          onCardDelete={handleDeleteClick}
+          onConfirmDelete={handleDeleteClick}
+        />
+        <Footer />
 
-          <EditProfilePopup
-            isOpen={isEditProfilePopupOpen}
-            onClose={closeAllPopups}
-            onUpdateUser={handleUpdateUser}
-            onLoading={isLoading}
-          />
+        <EditProfilePopup
+          isOpen={isEditProfilePopupOpen}
+          onClose={closeAllPopups}
+          onUpdateUser={handleUpdateUser}
+          onLoading={isLoading}
+        />
 
-          <AddPlacePopup
-            isOpen={isAddPlacePopupOpen}
-            onClose={closeAllPopups}
-            onAddPlace={handleAddPlaceSubmit}
-            onLoading={isLoading}
-          />
+        <AddPlacePopup
+          isOpen={isAddPlacePopupOpen}
+          onClose={closeAllPopups}
+          onAddPlace={handleAddPlaceSubmit}
+          onLoading={isLoading}
+        />
 
-          <ConfirmDeletePopup
-            isOpen={isConfirmDeletePopupOpen}
-            onClose={closeAllPopups}
-            card={deletedCard}
-            onSubmit={handleCardDelete}
-            onLoading={isLoading}
-          />
+        <ConfirmDeletePopup
+          isOpen={isConfirmDeletePopupOpen}
+          onClose={closeAllPopups}
+          card={deletedCard}
+          onSubmit={handleCardDelete}
+          onLoading={isLoading}
+        />
 
-          <EditAvatarPopup
-            isOpen={isEditAvatarPopupOpen}
-            onClose={closeAllPopups}
-            onUpdateAvatar={handleUpdateAvatar}
-            onLoading={isLoading}
-          />
+        <EditAvatarPopup
+          isOpen={isEditAvatarPopupOpen}
+          onClose={closeAllPopups}
+          onUpdateAvatar={handleUpdateAvatar}
+          onLoading={isLoading}
+        />
 
-          <ImagePopup 
-            card={selectedCard}
-            onClose={closeAllPopups}
-            />
+        <ImagePopup
+          card={selectedCard}
+          onClose={closeAllPopups}
+        />
 
-        </div>
-      </CurrentUserContext.Provider>
-    </AppContext.Provider>
+      </div>
+    </CurrentUserContext.Provider>
   );
 }
 
